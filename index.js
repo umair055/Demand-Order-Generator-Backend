@@ -3,8 +3,7 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const AllProductsRouter = require("./Router/AllProductsRouter");
-
-require("./Database/connection");
+const mongoose = require("mongoose");
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +30,14 @@ app.get("/", (req, res) => {
   res.json("SERVER STARTED");
 });
 
-app.listen(PORT, () => {
-  console.log(`APP IS RUNNING ON http://localhost:${PORT}`);
-});
+mongoose
+  .connect(process.env.DATABASE)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`APP IS RUNNING ON http://localhost:${PORT}`);
+    });
+    console.log("DATABASE CONNECTED SUCCESSFULLY!!");
+  })
+  .catch((error) => {
+    console.log("FAILED TO CONNECT TO DATABASE", error);
+  });
